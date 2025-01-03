@@ -1,0 +1,88 @@
+[
+    {
+        "url": "https://www.makro.plazavea.com.pe/pierna-con-encuentro-de-pollo-congelado-copacol-xkg/p",
+        "type": "pollo"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/sangrecita-de-pollo-redondos-bolsa-500g/p",
+        "type": "pollo"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/filete-de-pechuga-de-pollo-congelado-san-fernando-x-kg/p",
+        "type": "pollo"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/higado-redondos-frascos-xkg/p",
+        "type": "pollo"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/piernitas-pollo-importadas/p",
+        "weight_gr": 1000
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/el-bistecito-san-fernando-bolsa-4un/p",
+        "weight_gr": 424
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/mondongo-cau-cau-economico-congelado-aro-1kg/p",
+        "type": "cerdo"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/mondongo-italiano-economico-congelado-aro-1kg/p",
+        "type": "cerdo"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/pulmon-importado-halema-congelado-xkg/p",
+        "type": "res"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/gallina-menudencia-importada/p",
+        "weight_gr": 1000
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/pollo-fresco-san-ferndando-x-kg/p",
+        "type": "pollo"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/carne-molida-la-segoviana-bolsa-500g/p",
+        "type": "res"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/pierna-con-encuentro-san-fernando-congelado-xkg/p",
+        "type": "pollo"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/gallina-trozada-en-4-aro-x-kg/p",
+        "type": "gallina"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/mejillones-alipofresco-paquete-300g/p",
+        "type": "mariscos"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/filete-de-tilapia-congelado-bolsa-1kg/p",
+        "type": "pescado"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/alitas-de-pollo-sadia-bolsa-1kg/p",
+        "type":"pollo"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/chuleta-punta-de-lomo-de-cerdo/p",
+        "type": "cerdo",
+        "weight_gr": 1000
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/alitas-sazonadas-redondos-buffalo-wings-caja-400g/p",
+        "type":"res"
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/chuleta-de-brazuelo-de-cerdo/p",
+        "type":"cerdo",
+        "weight_gr": 1000
+    },
+    {
+        "url": "https://www.makro.plazavea.com.pe/filete-de-swai-importado-x-kg/p",
+        "type": "pescado"
+    }
+]

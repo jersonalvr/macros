@@ -1,0 +1,9 @@
+streamlit
+google.generativeai
+selenium
+webdriver_manager
+urllib
+zenrows
+beautifulsoup4
+unicodedata
+streamlit_tailwind
