@@ -64,7 +64,7 @@ def render_sidebar():
     }
 
 # Función para renderizar una tarjeta de producto con Tailwind CSS
-def render_product_card(product, theme='light'):
+def render_product_card(product, theme='dark'):
     """
     Renderiza una tarjeta de producto con información detallada utilizando Tailwind CSS.
 
