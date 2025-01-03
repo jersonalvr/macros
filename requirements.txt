@@ -4,5 +4,4 @@ selenium
 webdriver_manager
 zenrows
 beautifulsoup4
-unicodedata
 streamlit_tailwind
