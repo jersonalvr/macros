@@ -1,3 +1,5 @@
+# modules/ui_components.py
+
 import streamlit as st
 import base64
 import textwrap
@@ -5,6 +7,7 @@ from streamlit_tailwind import st_tw
 import calendar
 from datetime import datetime
 from utils.constants import MEAT_TYPES
+from modules.config import LOGOS_DIR
 
 def render_sidebar():
     """
@@ -64,21 +67,22 @@ def render_sidebar():
     }
 
 # Función para renderizar una tarjeta de producto con Tailwind CSS
-def render_product_card(product, theme='dark'):
+def render_product_card(product, theme):
     """
     Renderiza una tarjeta de producto con información detallada utilizando Tailwind CSS.
+    Altura ajustada a 320px con espaciado optimizado.
 
     :param product: Diccionario con información del producto.
     :param theme: Tema actual de Streamlit ('light' o 'dark').
     """
-    with open("assets/logos/fitia_logo.svg", "r") as f:
+    with open(f"{LOGOS_DIR}/fitia_logo.svg", "r") as f:
         fitia_logo_light = f.read()
-    with open("assets/logos/fitia_logo_blank.svg", "r") as f:
+    with open(f"{LOGOS_DIR}/fitia_logo_blank.svg", "r") as f:
         fitia_logo_dark = f.read()
     
-    with open("assets/logos/makro_logo.svg", "r") as f:
+    with open(f"{LOGOS_DIR}/makro_logo.svg", "r") as f:
         makro_logo_light = f.read()
-    with open("assets/logos/makro_logo_blank.svg", "r") as f:
+    with open(f"{LOGOS_DIR}/makro_logo_blank.svg", "r") as f:
         makro_logo_dark = f.read()
     
     # Convertir a base64
@@ -97,47 +101,51 @@ def render_product_card(product, theme='dark'):
     
     # Construir el contenido HTML de la tarjeta
     card_html = f"""
-    <div class="flex flex-col {bg_color} {text_color} p-6 rounded-lg shadow-lg mb-6">
-        <div class="flex items-center mb-6">
-            <img src="{product['image_url']}" alt="{product['name']}" class="w-24 h-24 object-cover mr-6 rounded-md">
-            <div>
-                <h3 class="text-2xl font-bold">{product['name']}</h3>
-                <p class="text-sm">Tipo: {product.get('type', 'No especificado')}</p>
+    <div class="flex flex-col {bg_color} {text_color} p-4 rounded-lg shadow-lg h-80">
+        <!-- Header con imagen y nombre - Aumentado el tamaño y espaciado -->
+        <div class="flex items-start space-x-6 mb-6">
+            <img src="{product['image_url']}" alt="{product['name']}" class="w-20 h-20 md:w-24 md:h-24 object-cover rounded-lg flex-shrink-0">
+            <div class="min-w-0">
+                <h3 class="text-xl md:text-2xl font-bold leading-tight mb-2">{product['name']}</h3>
+                <p class="text-sm md:text-base">Tipo: {product.get('type', 'No especificado')}</p>
             </div>
         </div>
         
-        <div class="grid grid-cols-2 gap-6 mb-6">
+        <!-- Precio y Peso -->
+        <div class="grid grid-cols-2 gap-3 mb-2">
             <div>
-                <h4 class="font-semibold mb-2">Precio</h4>
-                <p>Regular: S/ {product['price'].get('regular_price', 'N/A')}</p>
-                {"<p>Oferta: " + product['price']['promotion']['units'] + " x S/ " + str(product['price']['promotion']['price']) + "</p>" 
+                <h4 class="text-sm font-semibold mb-0.5">Precio</h4>
+                <p class="text-sm">Regular: S/ {product['price'].get('regular_price', 'N/A')}</p>
+                {"<p class='text-sm'>Oferta: " + product['price']['promotion']['units'] + " x S/ " + str(product['price']['promotion']['price']) + "</p>" 
                  if product['price'].get('promotion') else ""}
             </div>
             
             <div>
-                <h4 class="font-semibold mb-2">Peso</h4>
-                <p>{product['weight_gr']} g</p>
+                <h4 class="text-sm font-semibold mb-0.5">Peso</h4>
+                <p class="text-sm">{product['weight_gr']} g</p>
             </div>
         </div>
         
-        {"<div class='grid grid-cols-2 gap-6 mb-6'>" +
+        {"<div class='grid grid-cols-2 gap-3'>" +
             f"""
             <div>
-                <h4 class="font-semibold mb-2">Información Nutricional (100g)</h4>
-                <p>Calorías: {product['nutrition'].get('calories', 'N/A')} kcal</p>
-                <p>Proteínas: {product['nutrition'].get('protein', 'N/A')} g</p>
-                <p>Carbohidratos: {product['nutrition'].get('carbs', 'N/A')} g</p>
-                <p>Grasas: {product['nutrition'].get('fat', 'N/A')} g</p>
+                <h4 class="text-sm font-semibold mb-0.5">Información Nutricional</h4>
+                <p class="text-sm">Calorías: {product['nutrition'].get('calories', 'N/A')} kcal</p>
+                <p class="text-sm">Proteínas: {product['nutrition'].get('protein', 'N/A')} g</p>
+                <p class="text-sm">Carbohidratos: {product['nutrition'].get('carbs', 'N/A')} g</p>
+                <p class="text-sm">Grasas: {product['nutrition'].get('fat', 'N/A')} g</p>
             </div>
             <div class="flex flex-col justify-between">
-                <a href="{product['fitia_url']}" target="_blank" class="mb-4 flex items-center">
-                    <img src="{fitia_logo}" alt="Fitia" class="h-8 mr-2">
-                    <span>Ver en Fitia</span>
-                </a>
-                <a href="{product['url']}" target="_blank" class="flex items-center">
-                    <img src="{makro_logo}" alt="Makro" class="h-8 mr-2">
-                    <span>Comprar en Makro</span>
-                </a>
+                <div class="flex flex-col space-y-3">
+                    <a href="{product['fitia_url']}" target="_blank" class="flex items-center">
+                        <span class="text-sm mr-2">Ver en</span>
+                        <img src="{fitia_logo}" alt="Fitia" class="h-5">
+                    </a>
+                    <a href="{product['url']}" target="_blank" class="flex items-center">
+                        <span class="text-sm mr-2">Comprar en</span>
+                        <img src="{makro_logo}" alt="Makro" class="h-5">
+                    </a>
+                </div>
             </div>
             """ +
         "</div>" if product.get('nutrition') else ""}
@@ -147,7 +155,7 @@ def render_product_card(product, theme='dark'):
     # Renderizar la tarjeta utilizando streamlit_tailwind
     st_tw(
         text=card_html,
-        height=400  # Ajusta la altura según sea necesario
+        height="320"
     )
 
 def render_add_product_form(data_manager):
