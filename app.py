@@ -6,7 +6,14 @@ from modules.config import *
 from modules.data_manager import DataManager
 from modules.scraper import Scraper
 from modules.recipe_generator import RecipeGenerator
-from modules.ui_components import render_sidebar, render_product_card
+from modules.ui_components import (
+    render_sidebar, 
+    render_product_card, 
+    render_add_product_form, 
+    render_recipe_generator, 
+    render_nutrition_comparison,
+    donation_footer
+)
 from utils.calculations import calculate_daily_consumption, calculate_optimal_purchase
 from utils.constants import MEAT_TYPES
 import logging
@@ -97,18 +104,14 @@ def main():
 
     # Usar st.session_state.selected_products para el resto de la lógica
     if st.session_state.selected_products:
-        total_protein_needed = user_prefs['daily_protein']
-        protein_per_product = total_protein_needed / len(st.session_state.selected_products)
-        
         for product_url in st.session_state.selected_products:
             product = products[product_url]
-            # st.subheader(product['name'])
             # Validar si el producto tiene información nutricional
             if not product.get('nutrition'):
                 st.warning(f"No hay información nutricional para {product['name']}")
                 continue
-            
-            # Safely handle price information
+
+            # Manejar información de precios de forma segura
             regular_price = product.get('price', {}).get('regular_price')
             promo_price = None
             promo_units = None
@@ -118,7 +121,7 @@ def main():
                 promo_units = product['price']['promotion'].get('units')
             
             consumption = calculate_daily_consumption(
-                protein_needed=protein_per_product,
+                protein_needed=user_prefs['daily_protein'] / len(st.session_state.selected_products),
                 protein_per_100g=product['nutrition']['protein'],
                 weight_gr=product['weight_gr']
             )
@@ -128,12 +131,13 @@ def main():
                 regular_price=regular_price,
                 promo_price=promo_price,
                 promo_units=promo_units,
-                days=calendar.monthrange(datetime.now().year, 
-                                      list(calendar.month_name).index(user_prefs['month']))[1]
+                days=user_prefs['days_in_month']
             )
             
+            # Renderizar tarjeta del producto
             render_product_card(product, theme)
 
+            # Mostrar consumo diario y compra mensual óptima
             col1, col2 = st.columns(2)
             with col1:
                 st.markdown(f"""
@@ -149,53 +153,20 @@ def main():
                     - Costo total: S/ {purchase.get('total_cost', 'N/A'):.2f}
                     - Costo diario: S/ {purchase.get('daily_cost', 'N/A'):.2f}
                 """)
-        
-        # Generate recipe button
-        if st.button("Generar receta"):
-            with st.spinner("🍽️ Generando una deliciosa receta peruana personalizada..."):
-                ingredients = {
-                    products[url]['name']: calculate_daily_consumption(
-                        user_prefs['daily_protein'] / len(new_selections),
-                        products[url]['nutrition']['protein'],
-                        products[url]['weight_gr']
-                    )['grams']
-                    for url in new_selections
-                }
-                
-                recipe = recipe_generator.generate_recipe(ingredients)
 
-            if recipe:
-                st.markdown("### Receta sugerida")
-                st.markdown(recipe)
-                st_lottie.st_lottie(
-                    gemini_logo, 
-                    key='logo', 
-                    height=50,  
-                    width=50,   
-                    loop=True,
-                    quality="low"  
-                )
-            else:
-                st.error("Error al generar la receta. Por favor intenta de nuevo.")
+        # Renderizar comparación nutricional
+        render_nutrition_comparison({url: products[url] for url in st.session_state.selected_products})
 
-    # Agregar nueva sección para agregar un nuevo producto
+        # Renderizar generador de recetas
+        render_recipe_generator(recipe_generator, {url: products[url] for url in st.session_state.selected_products}, user_prefs)
+
+    # Renderizar formulario para agregar nuevos productos
     with st.expander("Agregar nuevo producto"):
-        new_url = st.text_input("URL del producto (Makro)")
-        weight_input = st.number_input("Peso en gramos (si no se especifica en la URL)", value=100)
-        meat_type = st.selectbox("Tipo de carne", [''] + MEAT_TYPES)
-        
-        if st.button("Agregar producto"):
-            if validate_url(new_url):
-                url_data = {
-                    'url': new_url,
-                    'weight_gr': weight_input if weight_input > 0 else None,
-                    'type': meat_type if meat_type else None
-                }
-                if data_manager.add_product_url(url_data):
-                    st.success("Producto agregado exitosamente")
-            else:
-                st.error("URL inválida. Debe ser una URL de Makro Plaza Vea")
-    
+        producto_agregado = render_add_product_form(data_manager)
+        if producto_agregado:
+            st.rerun()  # Recargar la aplicación para mostrar el nuevo producto
+
+    donation_footer(ASSETS_DIR)
     # Actualizar información de productos
     # if st.button("Actualizar información"):
     #     update_time = datetime.now()

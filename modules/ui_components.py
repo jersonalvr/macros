@@ -7,7 +7,10 @@ from streamlit_tailwind import st_tw
 import calendar
 from datetime import datetime
 from utils.constants import MEAT_TYPES
-from modules.config import LOGOS_DIR
+from modules.config import ASSETS_DIR, LOGOS_DIR
+import os
+import pyperclip
+from st_copy_to_clipboard import st_copy_to_clipboard
 
 def render_sidebar():
     """
@@ -208,8 +211,18 @@ def render_recipe_generator(recipe_generator, selected_products, user_prefs):
     :param selected_products: Productos seleccionados
     :param user_prefs: Preferencias del usuario
     """
-    st.header("Generador de Recetas")
-    
+    st.markdown("""
+    <style>
+    .custom-header {
+        font-size: 1.75em; /* Ajusta el tamaño según tus necesidades */
+        text-align: center;
+        color: var(--text-color); /* Utiliza la variable de color del tema */
+    }
+    </style>
+    <h4 class="custom-header">Generador de Recetas 🍽️</h4>
+    """,
+    unsafe_allow_html=True
+    )
     # Validar que haya productos seleccionados
     if not selected_products:
         st.warning("Selecciona al menos un producto para generar una receta")
@@ -240,10 +253,14 @@ def render_recipe_generator(recipe_generator, selected_products, user_prefs):
     
     with col1:
         meal_type = st.selectbox("Tipo de Comida", [
+            "Todas las comidas del día",
             "Desayuno", 
             "Almuerzo", 
             "Cena", 
-            "Snack/Merienda"
+            "Snack/Merienda",
+            "Desayuno y Almuerzo",
+            "Almuerzo y Cena",
+            "Cena y Desayuno"
         ])
     
     with col2:
@@ -266,7 +283,8 @@ def render_recipe_generator(recipe_generator, selected_products, user_prefs):
     
     # Botón para generar receta
     if st.button("Generar Receta"):
-        with st.spinner("Generando receta..."):
+        spinner_message = f"Generando la receta {cuisine_type.lower()} de {meal_type.lower()}..."
+        with st.spinner(spinner_message):
             # Preparar contexto de la receta
             recipe_context = {
                 "ingredients": ingredients,
@@ -301,8 +319,19 @@ def render_nutrition_comparison(selected_products):
     
     :param selected_products: Diccionario de productos seleccionados
     """
-    st.header("Comparación Nutricional")
-    
+    st.markdown("""
+    <style>
+    .custom-header {
+        font-size: 1.75em; /* Ajusta el tamaño según tus necesidades */
+        text-align: center;
+        color: var(--text-color); /* Utiliza la variable de color del tema */
+    }
+    </style>
+    <h4 class="custom-header">📊 Comparación Nutricional</h4>
+    """,
+    unsafe_allow_html=True
+    )
+
     if not selected_products:
         st.warning("Selecciona productos para comparar")
         return
@@ -326,8 +355,11 @@ def render_nutrition_comparison(selected_products):
             comparison_data['Calorías (100g)'].append(nutrition.get('calories', 0))
     
     # Mostrar tabla de comparación
-    st.dataframe(comparison_data)
-    
+
+    col1, col2, col3 = st.columns([1,5,1])
+    with col2:
+        st.dataframe(comparison_data)
+
     # Gráfico de barras comparativo
     try:
         import plotly.express as px
@@ -348,4 +380,123 @@ def render_nutrition_comparison(selected_products):
         st.plotly_chart(fig)
     except ImportError:
         st.warning("Instala Plotly para visualizaciones más detalladas")
+
+def donation_footer(ASSETS_DIR):
+    
+    footer = st.container()
+    
+    with footer:
+        st.markdown("""
+        <style>
+        .custom-header {
+            font-size: 1.75em; /* Ajusta el tamaño según tus necesidades */
+            text-align: center;
+            color: var(--text-color); /* Utiliza la variable de color del tema */
+        }
+        </style>
+        <h4 class="custom-header">☕ Buy me a coffee</h4>
+        """,
+        unsafe_allow_html=True
+        )
+        # Tabs for different payment methods
+        tab1, tab2, tab3, tab4, tab5 = st.tabs(["Yape", "Depósito Bancario", "Tarjeta", "Otros Métodos", "Crypto"])
+        
+        # Yape Tab
+        with tab1:
+            st.subheader("Donar por Yape")
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                yape_image_path = os.path.join(ASSETS_DIR, "yape.png")
+                if os.path.exists(yape_image_path):
+                    st.image(yape_image_path, width=300)
+                else:
+                    st.error(f"No se encontró la imagen en: {yape_image_path}")
+            with col2:
+                # Agregamos el número de Yape con botón para copiar
+                st_copy_to_clipboard("964536063", "Copiar número de Yape")
+
+        # Bank Deposits Tab
+        with tab2:
+            col1, col2 = st.columns([1, 1])
             
+            with col1:
+                st.subheader("En Soles 🇵🇪")
+                banks_soles = {
+                    "BCP": "31004315283063",
+                    "BanBif": "008023869670",
+                    "Interbank": "8983223094904",
+                    "Scotiabank": "7508188435"
+                }
+                
+                for bank, account in banks_soles.items():
+                    st.write(f"**{bank}:**")
+                    st_copy_to_clipboard(account, f"Copiar cuenta {bank}")
+            
+            with col2:
+                st.subheader("En Dólares 💵")
+                banks_usd = {
+                    "BCP": "31004319160179",
+                    "Interbank": "8983224537574",
+                    "Scotiabank": "7508188145"
+                }
+                
+                for bank, account in banks_usd.items():
+                    st.write(f"**{bank}:**")
+                    st_copy_to_clipboard(account, f"Copiar cuenta {bank}")
+        
+        # Card Payments Tab
+        with tab3:
+            st.subheader("Donar con tarjeta 💳")
+            
+            amounts = {
+                "10": "https://pago-seguro.vendemas.com.pe/MTYzNDc3OTY3NjYxMWM4MjU2MTIuNzMxNzMxMjgxNTUz",
+                "15": "https://pago-seguro.vendemas.com.pe/ZjE5MTc2MWIzMjM0MDQ3NDQ0NC4yOWQxNzMxMjgxNjIz",
+                "20": "https://pago-seguro.vendemas.com.pe/NmEzOTkwNzI1OTY1Zi42MTM0MDg2NDYxNzMxMjgxNjUy",
+                "25": "https://pago-seguro.vendemas.com.pe/MTUzODVjYTM4NDIzZDgxNjMwLjI0NzcxNzMxMjgxNjc3",
+                "30": "https://pago-seguro.vendemas.com.pe/ODM0LjIyMTYyMjA2NjZmYjdhNmMzM2QxNzMxMjgxNzA3",
+                "35": "https://pago-seguro.vendemas.com.pe/ODM3MzMzMDFkNDcuOTE2YzUzMjQxNTExNzMxMjgxNzI1",
+                "40": "https://pago-seguro.vendemas.com.pe/YzgwZjM2NzM1LjZiMWQ0NzEzNTMxNzYxNzMxMjgxNzQ0",
+                "45": "https://pago-seguro.vendemas.com.pe/MTgwMTYuNzQ1MzM0OTk0MzI4MTQ2MzYxNzMxMjgxNzYy"
+            }
+            
+            # Creamos dos filas de 4 columnas cada una para mejor visualización
+            for row in range(2):
+                cols = st.columns(4)
+                start_idx = row * 4
+                end_idx = start_idx + 4
+                
+                # Tomamos solo los montos correspondientes a esta fila
+                row_amounts = dict(list(amounts.items())[start_idx:end_idx])
+                
+                for col_idx, (amount, link) in enumerate(row_amounts.items()):
+                    with cols[col_idx]:
+                        st.link_button(f"S/ {amount}", link)
+            
+            st.link_button("Más de S/ 50", "https://linkdecobro.ligo.live/v3/44df73097f594239b21b78b6905bed98")
+        
+        # Other Payment Methods Tab
+        with tab4:
+            col1, col2 = st.columns([1, 1])
+            
+            with col1:
+                st.subheader("Mercado Pago")
+                st.link_button("Donar con Mercado Pago", "https://link.mercadopago.com.pe/jersonapp")
+            
+            with col2:
+                st.subheader("PayPal")
+                st.link_button("Donar con PayPal", "https://www.paypal.com/paypalme/dschimbote")
+        
+        # Crypto Tab
+        with tab5:
+            st.subheader("Binance")
+            col1, col2 = st.columns([1, 1])
+            
+            with col1:
+                binance_image_path = os.path.join(ASSETS_DIR, "binance.png")
+                if os.path.exists(binance_image_path):
+                    st.image(binance_image_path, width=300)
+                else:
+                    st.error(f"No se encontró la imagen en: {binance_image_path}")
+            
+            with col2:
+                st.link_button("Donar con Binance", "https://app.binance.com/qr/dplkbb7f88c5329c4692adf278670d1b37ab")

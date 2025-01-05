@@ -5,4 +5,6 @@ webdriver_manager
 zenrows
 beautifulsoup4
 streamlit_tailwind
-streamlit_lottie
+st_copy_to_clipboard
+pandas
+plotly
