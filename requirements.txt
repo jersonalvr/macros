@@ -5,3 +5,4 @@ webdriver_manager
 zenrows
 beautifulsoup4
 streamlit_tailwind
+streamlit_lottie
