@@ -8,3 +8,4 @@ streamlit_tailwind
 st_copy_to_clipboard
 pandas
 plotly
+pyperclip
