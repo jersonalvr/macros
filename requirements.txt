@@ -9,3 +9,4 @@ st_copy_to_clipboard
 pandas
 plotly
 pyperclip
+streamlit-lottie
